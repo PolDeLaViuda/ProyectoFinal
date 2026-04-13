@@ -2,35 +2,46 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Login y Registro - Proyecto</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login y Registro</title>
     <link rel="stylesheet" href="assets/css/estilo.css">
 </head>
 <body>
     <main>
         <div class="contenedor__todo">
-            <div class="caja__trasera-register">
-                <h3>¿Aún no tienes cuenta?</h3>
-                <p>Regístrate para poder iniciar sesión</p>
+            <div class="caja__trasera">
+                <div class="caja__trasera-login">
+                    <h3>¿Ya tienes una cuenta?</h3>
+                    <p>Inicia sesión para entrar en la página</p>
+                    <button id="btn__iniciar-sesion">Iniciar Sesión</button>
+                </div>
+                <div class="caja__trasera-register">
+                    <h3>¿Aún no tienes una cuenta?</h3>
+                    <p>Regístrate para que puedas iniciar sesión</p>
+                    <button id="btn__registrarse">Regístrate</button>
+                </div>
             </div>
 
-            <form action="php/registro_usuario_be.php" method="POST" class="formulario__register">
-                <h2>Registrarse</h2>
-                <input type="text" placeholder="Nombre completo" name="nombre_completo" required>
-                <input type="text" placeholder="Correo Electronico" name="correo" required>
-                <input type="text" placeholder="Usuario" name="usuario" required>
-                <input type="password" placeholder="Contraseña" name="contrasena" required>
-                <button>Registrarse</button>
-            </form>
-            
-            <hr style="margin: 30px 0; border: 0; border-top: 1px solid #eee;">
+            <div class="contenedor__login-register">
+                <form action="php/login_usuario_be.php" method="POST" class="formulario__login">
+                    <h2>Iniciar Sesión</h2>
+                    <input type="text" placeholder="Correo Electronico" name="correo">
+                    <input type="password" placeholder="Contraseña" name="contrasena">
+                    <button>Entrar</button>
+                </form>
 
-            <form action="php/login_usuario_be.php" method="POST" class="formulario__login">
-                <h2>Iniciar Sesión</h2>
-                <input type="text" placeholder="Correo Electronico" name="correo" required>
-                <input type="password" placeholder="Contraseña" name="contrasena" required>
-                <button>Entrar</button>
-            </form>
+                <form action="php/registro_usuario_be.php" method="POST" class="formulario__register">
+                    <h2>Registrarse</h2>
+                    <input type="text" placeholder="Nombre completo" name="nombre_completo">
+                    <input type="text" placeholder="Correo Electronico" name="correo">
+                    <input type="text" placeholder="Usuario" name="usuario">
+                    <input type="password" placeholder="Contraseña" name="contrasena">
+                    <button>Registrarse</button>
+                </form>
+            </div>
         </div>
     </main>
+
+    <script src="assets/js/script.js"></script>
 </body>
 </html>
