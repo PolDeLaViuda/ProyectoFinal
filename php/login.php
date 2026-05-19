@@ -8,7 +8,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $_SESSION['error_login'] = "Rellena todos los campos.";
         header("Location: ../index.php"); exit;
     }
-    $stmt = mysqli_prepare($conexion, "SELECT id, nombre, email, password_hash FROM usuarios WHERE email = ?");
+    $stmt = mysqli_prepare($conexion, "SELECT id, nombre, email, password_hash, rol FROM usuarios WHERE email = ?");
     mysqli_stmt_bind_param($stmt, "s", $email);
     mysqli_stmt_execute($stmt);
     $res = mysqli_stmt_get_result($stmt);
@@ -17,6 +17,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $_SESSION['usuario_id']     = $fila['id'];
             $_SESSION['usuario_nombre'] = $fila['nombre'];
             $_SESSION['usuario_email']  = $fila['email'];
+            $_SESSION['usuario_rol']    = $fila['rol'] ?? 'user';
+            $_SESSION['nuevo_login']    = true;
             header("Location: ../home.php"); exit;
         } else {
             $_SESSION['error_login'] = "Contrasena incorrecta.";

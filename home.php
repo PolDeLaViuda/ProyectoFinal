@@ -35,5 +35,6 @@ $nombre = htmlspecialchars($_SESSION['usuario_nombre']);
         </a>
     </div>
 </main>
+<?php include 'php/tab_sesion.php'; ?>
 </body>
 </html>

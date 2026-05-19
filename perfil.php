@@ -77,6 +77,9 @@ $email_s  = htmlspecialchars($email);
         </div>
 
         <a href="home.php" class="boton-perfil-sec">&#8592; Volver al inicio</a>
+        <?php if (($_SESSION['usuario_rol'] ?? '') === 'admin'): ?>
+        <a href="admin.php" class="boton-perfil-admin">&#128737; Panel de Admin</a>
+        <?php endif; ?>
         <a href="php/cerrar_sesion.php" class="boton-perfil-danger">&#128682; Cerrar sesion</a>
     </aside>
 
@@ -130,5 +133,6 @@ $email_s  = htmlspecialchars($email);
 </div>
 </main>
 
+<?php include 'php/tab_sesion.php'; ?>
 </body>
 </html>

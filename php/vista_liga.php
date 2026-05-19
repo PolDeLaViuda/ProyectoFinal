@@ -12,6 +12,47 @@
 // ================================================================
 
 require_once 'php/datos.php';
+require_once 'php/conexion.php';
+
+// --- Cargar favoritos del usuario para esta liga ---
+$_favs_liga = [];
+$_uid_vl = (int)$_SESSION['usuario_id'];
+$_stmt_fv = mysqli_prepare($conexion, "SELECT equipo_id FROM favoritos WHERE usuario_id=? AND liga=?");
+mysqli_stmt_bind_param($_stmt_fv, "is", $_uid_vl, $liga);
+mysqli_stmt_execute($_stmt_fv);
+$_res_fv = mysqli_stmt_get_result($_stmt_fv);
+while ($_row_fv = mysqli_fetch_assoc($_res_fv)) {
+    $_favs_liga[] = (int)$_row_fv['equipo_id'];
+}
+mysqli_stmt_close($_stmt_fv);
+
+// --- Formulario de contacto ---
+mysqli_query($conexion,
+    "CREATE TABLE IF NOT EXISTS contacto_mensajes (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        nombre VARCHAR(100) NOT NULL,
+        email VARCHAR(150) NOT NULL,
+        mensaje TEXT NOT NULL,
+        fecha DATETIME DEFAULT CURRENT_TIMESTAMP
+    )"
+);
+$_contacto_enviado = false;
+$_contacto_errores = [];
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['contacto_submit'])) {
+    $_c_nombre  = trim(htmlspecialchars($_POST['c_nombre']  ?? ''));
+    $_c_email   = trim($_POST['c_email']   ?? '');
+    $_c_mensaje = trim(htmlspecialchars($_POST['c_mensaje'] ?? ''));
+    if ($_c_nombre === '')                                       $_contacto_errores[] = 'El nombre es obligatorio.';
+    if (!filter_var($_c_email, FILTER_VALIDATE_EMAIL))          $_contacto_errores[] = 'Introduce un email valido.';
+    if (strlen($_c_mensaje) < 10)                               $_contacto_errores[] = 'El mensaje debe tener al menos 10 caracteres.';
+    if (empty($_contacto_errores)) {
+        $_c_email = htmlspecialchars($_c_email);
+        $_stmt_c = mysqli_prepare($conexion, "INSERT INTO contacto_mensajes (nombre, email, mensaje) VALUES (?,?,?)");
+        mysqli_stmt_bind_param($_stmt_c, 'sss', $_c_nombre, $_c_email, $_c_mensaje);
+        mysqli_stmt_execute($_stmt_c);
+        $_contacto_enviado = true;
+    }
+}
 
 // --- Leer parametros de la URL ---
 $fecha_sel = isset($_GET['fecha']) ? trim($_GET['fecha']) : date('Y-m-d');
@@ -171,10 +212,13 @@ $url_clas    = $pagina . '.php?vista=clasificacion&fecha=' . $fecha_sel;
                     $pct = $tot > 0 ? number_format($eq['w']/$tot, 3) : '.000';
                     $pc  = $pos < 6 ? 'pos--champions' : ($pos >= 14 ? 'pos--descenso' : '');
                 ?>
-                    <tr>
+                    <tr <?= in_array($eq['id'], $_favs_liga) ? 'class="fav-row"' : '' ?>>
                         <td class="pos-num <?= $pc ?>"><?= $pos+1 ?></td>
                         <td><a href="equipo.php?liga=nba&id=<?= $eq['id'] ?>"><img src="<?= htmlspecialchars($eq['logo']) ?>" class="escudo-mini" alt="" onerror="this.style.display='none'"></a></td>
-                        <td class="equipo-nombre-tabla"><a href="equipo.php?liga=nba&id=<?= $eq['id'] ?>" class="link-equipo"><?= htmlspecialchars($eq['name']) ?></a></td>
+                        <td class="equipo-nombre-tabla">
+                            <a href="equipo.php?liga=nba&id=<?= $eq['id'] ?>" class="link-equipo"><?= htmlspecialchars($eq['name']) ?></a>
+                            <?php if (in_array($eq['id'], $_favs_liga)): ?><span class="fav-heart">&#9829;</span><?php endif; ?>
+                        </td>
                         <td class="num-verde"><?= $eq['w'] ?></td>
                         <td class="num-rojo"><?= $eq['l'] ?></td>
                         <td><?= $pct ?></td>
@@ -199,10 +243,13 @@ $url_clas    = $pagina . '.php?vista=clasificacion&fecha=' . $fecha_sel;
                 $dg   = $eq['gf'] - $eq['gc'];
                 $pc   = $rank<=4 ? 'pos--champions' : ($rank<=6 ? 'pos--europa' : ($rank>=18 ? 'pos--descenso' : ''));
             ?>
-                <tr>
+                <tr <?= in_array($eq['id'], $_favs_liga) ? 'class="fav-row"' : '' ?>>
                     <td class="pos-num <?= $pc ?>"><?= $rank ?></td>
                     <td><a href="equipo.php?liga=laliga&id=<?= $eq['id'] ?>"><img src="<?= htmlspecialchars($eq['logo']) ?>" class="escudo-mini" alt="" onerror="this.style.display='none'"></a></td>
-                    <td class="equipo-nombre-tabla"><a href="equipo.php?liga=laliga&id=<?= $eq['id'] ?>" class="link-equipo"><?= htmlspecialchars($eq['name']) ?></a></td>
+                    <td class="equipo-nombre-tabla">
+                        <a href="equipo.php?liga=laliga&id=<?= $eq['id'] ?>" class="link-equipo"><?= htmlspecialchars($eq['name']) ?></a>
+                        <?php if (in_array($eq['id'], $_favs_liga)): ?><span class="fav-heart">&#9829;</span><?php endif; ?>
+                    </td>
                     <td><?= $eq['pj'] ?></td>
                     <td class="num-verde"><?= $eq['w'] ?></td>
                     <td><?= $eq['d'] ?></td>
@@ -234,7 +281,51 @@ $url_clas    = $pagina . '.php?vista=clasificacion&fecha=' . $fecha_sel;
 
 <?php endif; // fin vista ?>
 
+<!-- CARD DE CONTACTO -->
+<div class="contacto-card-wrap">
+    <div class="contacto-card">
+        <div class="contacto-card-icono">&#9993;</div>
+        <h2>Contacta con nosotros</h2>
+        <p>Tienes alguna pregunta, sugerencia o quieres decirnos algo? Escríbenos y te responderemos.</p>
+
+        <?php if ($_contacto_enviado): ?>
+            <div class="alerta alerta--exito" style="text-align:center;">
+                &#9989; Mensaje enviado. Gracias, <?= $nombre ?>!
+            </div>
+        <?php else: ?>
+            <?php if (!empty($_contacto_errores)): ?>
+                <div class="alerta alerta--error">
+                    <?php foreach ($_contacto_errores as $_e): ?><div>&#9888; <?= $_e ?></div><?php endforeach; ?>
+                </div>
+            <?php endif; ?>
+            <form method="POST" novalidate>
+                <input type="hidden" name="contacto_submit" value="1">
+                <div class="contacto-card-fila">
+                    <div class="campo">
+                        <label for="c_nombre">Nombre</label>
+                        <input type="text" id="c_nombre" name="c_nombre" required
+                               value="<?= isset($_POST['c_nombre']) ? htmlspecialchars($_POST['c_nombre']) : $nombre ?>">
+                    </div>
+                    <div class="campo">
+                        <label for="c_email">Email</label>
+                        <input type="email" id="c_email" name="c_email" required
+                               placeholder="tu@email.com"
+                               value="<?= isset($_POST['c_email']) ? htmlspecialchars($_POST['c_email']) : '' ?>">
+                    </div>
+                </div>
+                <div class="campo">
+                    <label for="c_mensaje">Mensaje</label>
+                    <textarea id="c_mensaje" name="c_mensaje" required
+                              placeholder="Escríbenos lo que necesites..."><?= isset($_POST['c_mensaje']) ? htmlspecialchars($_POST['c_mensaje']) : '' ?></textarea>
+                </div>
+                <button type="submit" class="boton boton--primario">Enviar mensaje</button>
+            </form>
+        <?php endif; ?>
+    </div>
+</div>
+
 </div><!-- pagina-liga -->
+<?php include __DIR__ . '/tab_sesion.php'; ?>
 </body>
 </html>
 
@@ -243,6 +334,9 @@ $url_clas    = $pagina . '.php?vista=clasificacion&fecha=' . $fecha_sel;
 //  FUNCION RENDER PARTIDO  (definida aqui para que este disponible)
 // ================================================================
 function render_partido_html(array $p, string $liga): void {
+    global $_favs_liga;
+    $local_fav = in_array($p['local']['id'],     $_favs_liga ?? []);
+    $visit_fav = in_array($p['visitante']['id'], $_favs_liga ?? []);
     $fin  = ($p['estado'] === 'FT');
     $vivo = ($p['estado'] === 'LIVE');
     $cls  = 'partido-card';
@@ -275,7 +369,10 @@ function render_partido_html(array $p, string $liga): void {
                 <img src="<?= htmlspecialchars($p['local']['logo']) ?>" class="escudo"
                      alt="<?= htmlspecialchars($p['local']['name']) ?>"
                      onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2252%22 height=%2252%22><rect width=%2252%22 height=%2252%22 rx=%228%22 fill=%22%23e2e8f0%22/><text x=%2226%22 y=%2233%22 text-anchor=%22middle%22 font-size=%2218%22>?</text></svg>'">
-                <span class="equipo-nombre"><?= htmlspecialchars($p['local']['name']) ?></span>
+                <span class="equipo-nombre">
+                    <?= htmlspecialchars($p['local']['name']) ?>
+                    <?php if ($local_fav): ?><span class="fav-heart">&#9829;</span><?php endif; ?>
+                </span>
                 <?php if ($liga === 'nba'): ?>
                     <span class="record"><?= $p['local']['w'] ?>W &middot; <?= $p['local']['l'] ?>L</span>
                 <?php endif; ?>
@@ -296,7 +393,10 @@ function render_partido_html(array $p, string $liga): void {
                 <img src="<?= htmlspecialchars($p['visitante']['logo']) ?>" class="escudo"
                      alt="<?= htmlspecialchars($p['visitante']['name']) ?>"
                      onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2252%22 height=%2252%22><rect width=%2252%22 height=%2252%22 rx=%228%22 fill=%22%23e2e8f0%22/><text x=%2226%22 y=%2233%22 text-anchor=%22middle%22 font-size=%2218%22>?</text></svg>'">
-                <span class="equipo-nombre"><?= htmlspecialchars($p['visitante']['name']) ?></span>
+                <span class="equipo-nombre">
+                    <?= htmlspecialchars($p['visitante']['name']) ?>
+                    <?php if ($visit_fav): ?><span class="fav-heart">&#9829;</span><?php endif; ?>
+                </span>
                 <?php if ($liga === 'nba'): ?>
                     <span class="record"><?= $p['visitante']['w'] ?>W &middot; <?= $p['visitante']['l'] ?>L</span>
                 <?php endif; ?>

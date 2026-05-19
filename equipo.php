@@ -4,6 +4,7 @@ if (!isset($_SESSION['usuario_nombre'])) { header("Location: index.php"); exit; 
 
 require_once 'php/datos.php';
 require_once 'php/plantillas.php';
+require_once 'php/conexion.php';
 
 $nombre  = htmlspecialchars($_SESSION['usuario_nombre']);
 $liga    = isset($_GET['liga'])   ? $_GET['liga']   : '';
@@ -55,8 +56,22 @@ function color_pos_ll(string $pos): string {
     };
 }
 
+
+
 $volver = $liga === 'nba' ? 'nba.php' : 'laliga.php';
 $color_header = $liga === 'nba' ? 'nba-header' : 'laliga-header';
+
+// Favoritos
+$uid_fav = (int)$_SESSION['usuario_id'];
+$stmt_fav = mysqli_prepare($conexion, "SELECT 1 FROM favoritos WHERE usuario_id=? AND liga=? AND equipo_id=?");
+mysqli_stmt_bind_param($stmt_fav, "isi", $uid_fav, $liga, $equipo_id);
+mysqli_stmt_execute($stmt_fav);
+mysqli_stmt_store_result($stmt_fav);
+$es_favorito = mysqli_stmt_num_rows($stmt_fav) > 0;
+mysqli_stmt_close($stmt_fav);
+
+$redirect_url = 'equipo.php?liga=' . urlencode($liga) . '&id=' . $equipo_id
+    . ($orden !== ($liga === 'nba' ? 'pts' : 'goles') ? '&orden=' . urlencode($orden) : '');
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -98,6 +113,15 @@ $color_header = $liga === 'nba' ? 'nba-header' : 'laliga-header';
                     <span class="meta-badge"><?= $equipo['gf'] ?> goles</span>
                 </div>
             <?php endif; ?>
+            <form action="php/toggle_favorito.php" method="POST" style="display:inline;">
+                <input type="hidden" name="liga"      value="<?= htmlspecialchars($liga) ?>">
+                <input type="hidden" name="equipo_id" value="<?= $equipo_id ?>">
+                <input type="hidden" name="redirect"  value="<?= htmlspecialchars($redirect_url) ?>">
+                <button type="submit" class="btn-fav <?= $es_favorito ? 'btn-fav--activo' : '' ?>">
+                    <span class="btn-fav-icono"><?= $es_favorito ? '&#9829;' : '&#9825;' ?></span>
+                    <?= $es_favorito ? 'Quitar de favoritos' : 'Añadir a favoritos' ?>
+                </button>
+            </form>
         </div>
     </div>
 </div>
@@ -202,5 +226,6 @@ $color_header = $liga === 'nba' ? 'nba-header' : 'laliga-header';
     </div>
 
 </div><!-- pagina-equipo -->
+<?php include 'php/tab_sesion.php'; ?>
 </body>
 </html>
