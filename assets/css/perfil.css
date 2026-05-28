@@ -1,0 +1,39 @@
+.pagina-perfil { min-height:calc(100vh - 60px); padding:40px 20px; }
+.perfil-wrap { max-width:960px; margin:0 auto; display:grid; grid-template-columns:280px 1fr; gap:28px; align-items:start; }
+
+.perfil-panel { background:#fff; border-radius:16px; padding:28px 24px; box-shadow:0 4px 20px rgba(0,0,0,.1); text-align:center; position:sticky; top:80px; }
+.perfil-avatar { width:72px; height:72px; border-radius:50%; background:linear-gradient(135deg,#667eea,#764ba2); color:#fff; font-size:26px; font-weight:800; display:flex; align-items:center; justify-content:center; margin:0 auto 12px; }
+.perfil-nombre { font-size:18px; font-weight:700; color:#2d3748; margin-bottom:4px; }
+.perfil-email  { font-size:13px; color:#718096; margin-bottom:16px; }
+.perfil-ligas  { display:flex; gap:8px; justify-content:center; flex-wrap:wrap; margin-bottom:16px; }
+.perfil-liga   { padding:4px 12px; border-radius:20px; font-size:12px; font-weight:700; }
+.perfil-liga--nba    { background:#1d428a; color:#fff; }
+.perfil-liga--laliga { background:#ee1c25; color:#fff; }
+
+.perfil-info-list { margin:16px 0; text-align:left; }
+.perfil-info-item { display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px solid #f0f0f0; font-size:13px; }
+.perfil-info-item:last-child { border-bottom:none; }
+.perfil-info-label { color:#718096; }
+.perfil-info-val   { font-weight:600; color:#2d3748; }
+.estado-activo { color:#276749; }
+
+.boton-perfil-sec    { display:block; padding:10px; background:#f7f8fc; color:#4a5568; border-radius:8px; font-size:14px; font-weight:600; text-align:center; margin-bottom:10px; border:1px solid #e2e8f0; transition:background 0.2s; }
+.boton-perfil-sec:hover { background:#edf2f7; text-decoration:none; color:#2d3748; }
+.boton-perfil-admin  { display:block; padding:10px; background:#faf5ff; color:#6b46c1; border-radius:8px; font-size:14px; font-weight:600; text-align:center; margin-bottom:10px; border:1px solid #d6bcfa; transition:background 0.2s; }
+.boton-perfil-admin:hover { background:#e9d8fd; text-decoration:none; color:#553c9a; }
+.boton-perfil-danger { display:block; padding:10px; background:#fff5f5; color:#c53030; border-radius:8px; font-size:14px; font-weight:600; text-align:center; margin-bottom:10px; border:1px solid #fed7d7; transition:background 0.2s; }
+.boton-perfil-danger:hover { background:#fed7d7; text-decoration:none; color:#9b2c2c; }
+
+.perfil-form-wrap   { background:#fff; border-radius:16px; padding:28px 32px; box-shadow:0 4px 20px rgba(0,0,0,.1); }
+.perfil-form-titulo { font-size:22px; font-weight:700; color:#2d3748; margin-bottom:4px; }
+.perfil-form-sub    { font-size:14px; color:#718096; margin-bottom:24px; }
+.perfil-seccion     { margin-bottom:24px; padding-bottom:24px; border-bottom:1px solid #f0f0f0; }
+.perfil-seccion:last-of-type { border-bottom:none; padding-bottom:0; }
+.perfil-seccion-titulo { font-size:16px; font-weight:700; color:#2d3748; margin-bottom:4px; }
+.perfil-seccion-sub    { font-size:13px; color:#718096; margin-bottom:16px; }
+
+@media (max-width:700px) {
+    .perfil-wrap { grid-template-columns:1fr; }
+    .perfil-panel { position:static; }
+    .perfil-form-wrap { padding:20px; }
+}

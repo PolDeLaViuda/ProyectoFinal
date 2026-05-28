@@ -1,0 +1,92 @@
+.pagina-admin { background:#f7f8fc; min-height:calc(100vh - 60px); padding:0 0 60px; }
+
+.admin-hero { background:linear-gradient(135deg,#667eea,#764ba2); padding:28px 32px; }
+.admin-hero-content { display:flex; align-items:center; gap:16px; max-width:1000px; margin:0 auto; }
+.admin-avatar { width:56px; height:56px; border-radius:50%; background:rgba(255,255,255,.25); color:#fff; font-size:20px; font-weight:800; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+.admin-titulo { font-size:24px; font-weight:800; color:#fff; margin-bottom:4px; }
+.admin-sub { color:rgba(255,255,255,.8); font-size:14px; }
+
+.admin-wrap { max-width:1000px; margin:0 auto; padding:28px 20px 0; }
+.admin-alerta { margin-bottom:20px; }
+
+.admin-stats { display:grid; gap:16px; margin-bottom:24px; }
+.admin-stats--4 { grid-template-columns:repeat(4,1fr); }
+.stat-card { background:#fff; border-radius:12px; padding:20px; text-align:center; box-shadow:0 2px 10px rgba(0,0,0,.07); }
+.stat-icono { font-size:28px; margin-bottom:8px; }
+.stat-val { font-size:28px; font-weight:800; color:#2d3748; }
+.stat-val--sm { font-size:16px; font-weight:700; color:#2d3748; }
+.stat-label { font-size:12px; color:#718096; margin-top:4px; font-weight:600; }
+
+.admin-seccion { background:#fff; border-radius:14px; padding:24px 28px; margin-bottom:20px; box-shadow:0 2px 10px rgba(0,0,0,.07); }
+.admin-seccion-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:20px; flex-wrap:wrap; gap:12px; }
+.admin-seccion-titulo { font-size:18px; font-weight:700; color:#2d3748; margin-bottom:4px; }
+.admin-seccion-sub { font-size:13px; color:#718096; }
+.ruta-badge { font-size:12px; background:#f7f8fc; color:#718096; padding:2px 8px; border-radius:6px; font-weight:400; font-family:monospace; }
+
+.boton-backup { padding:9px 18px; border-radius:8px; font-size:13px; font-weight:700; cursor:pointer; border:none; font-family:inherit; transition:all 0.15s; background:#667eea; color:#fff; }
+.boton-backup:hover { background:#5a67d8; }
+.boton-backup--azul   { background:#3182ce; }
+.boton-backup--azul:hover { background:#2b6cb0; }
+.boton-backup--morado { background:#6b46c1; }
+.boton-backup--morado:hover { background:#553c9a; }
+
+.tabla-backups-wrap { overflow-x:auto; }
+.tabla-backups { width:100%; border-collapse:collapse; font-size:13px; }
+.tabla-backups th { padding:10px 16px; font-size:12px; font-weight:700; color:#718096; text-align:center; border-bottom:2px solid #f0f0f0; background:#f7f8fc; }
+.tabla-backups td { padding:13px 16px; font-size:14px; text-align:center; border-bottom:1px solid #f0f0f0; vertical-align:middle; }
+.tabla-backups tr:last-child td { border-bottom:none; }
+.tabla-backups tr:hover td { background:#f7f8fc; }
+.fila-ultimo-backup td { background:#f0fff4; }
+.fila-ultimo-backup:hover td { background:#c6f6d5 !important; }
+.backup-nombre { text-align:left !important; font-family:monospace; font-size:13px; }
+.badge-ultimo { display:inline-block; padding:2px 8px; background:#38a169; color:#fff; border-radius:10px; font-size:10px; font-weight:700; margin-right:6px; font-family:'Segoe UI',sans-serif; }
+.backup-acciones { display:flex; gap:8px; justify-content:center; align-items:center; }
+.btn-accion { padding:6px 14px; border-radius:8px; font-size:13px; font-weight:600; cursor:pointer; border:none; font-family:inherit; transition:all 0.15s; text-decoration:none; display:inline-flex; align-items:center; gap:4px; }
+.btn-descargar { background:#ebf4ff; color:#2b6cb0; border:1px solid #bee3f8; }
+.btn-descargar:hover { background:#bee3f8; color:#2c5282; text-decoration:none; }
+.btn-eliminar  { background:#fff5f5; color:#c53030; border:1px solid #fed7d7; }
+.btn-eliminar:hover { background:#fed7d7; color:#9b2c2c; }
+.btn-restaurar { background:#f0fff4; color:#276749; border:1px solid #c6f6d5; }
+.btn-restaurar:hover { background:#c6f6d5; color:#22543d; }
+
+.rol-badge { display:inline-block; padding:3px 10px; border-radius:20px; font-size:11px; font-weight:700; }
+.rol-admin { background:#faf5ff; color:#6b46c1; border:1px solid #d6bcfa; }
+.rol-user  { background:#f7fafc; color:#718096; border:1px solid #e2e8f0; }
+.admin-badge-header { background:rgba(107,70,193,.25); color:#fff; padding:3px 10px; border-radius:12px; font-size:12px; font-weight:700; }
+.boton-perfil-admin { display:block; width:100%; padding:10px; background:#faf5ff; color:#6b46c1; border-radius:8px; font-size:14px; font-weight:600; text-align:center; margin-bottom:10px; border:1px solid #d6bcfa; transition:background 0.2s; }
+.boton-perfil-admin:hover { background:#e9d8fd; text-decoration:none; color:#553c9a; }
+
+/* Variante 3 columnas para stats */
+.admin-stats--3 { grid-template-columns:repeat(3,1fr); }
+
+/* Formulario nuevo usuario */
+.nuevo-usuario-form { background:#f7f8fc; border-radius:10px; padding:20px 24px; margin-bottom:20px; border:1px solid #e2e8f0; }
+.nuevo-usuario-form h3 { font-size:15px; color:#2d3748; margin-bottom:16px; }
+.nuevo-usuario-grid { display:grid; grid-template-columns:1fr 1fr 1fr auto; gap:12px; align-items:end; }
+.nuevo-usuario-grid .campo { margin:0; }
+.nuevo-usuario-acciones { margin-top:14px; display:flex; gap:8px; align-items:center; }
+
+/* Formularios inline en tablas */
+.form-inline { display:inline; }
+
+/* Celdas de tabla */
+.th-izq { text-align:left !important; }
+.td-id { color:#a0aec0; font-size:13px; }
+.td-nombre { text-align:left; font-weight:600; }
+.td-email { text-align:left; color:#718096; }
+.td-fecha { color:#718096; font-size:13px; white-space:nowrap; }
+.td-mensaje { text-align:left; max-width:300px; }
+.td-tu-cuenta { font-size:12px; color:#a0aec0; }
+
+/* Pie del panel */
+.admin-volver { text-align:center; margin-top:16px; }
+.admin-volver .boton-perfil-sec { display:inline-block; width:auto; padding:10px 28px; }
+
+@media (max-width:700px) {
+    .admin-stats, .admin-stats--4 { grid-template-columns:1fr 1fr; }
+    .admin-seccion-header { flex-direction:column; }
+    .admin-seccion { padding:20px 16px; }
+    .admin-hero { padding:20px 16px; }
+    .backup-acciones { flex-direction:column; align-items:stretch; }
+    .btn-accion { justify-content:center; }
+}

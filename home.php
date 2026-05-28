@@ -9,7 +9,8 @@ $nombre = htmlspecialchars($_SESSION['usuario_nombre']);
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>Inicio - StatsZone</title>
-<link rel="stylesheet" href="assets/css/estilo.css">
+<link rel="stylesheet" href="assets/css/base.css">
+<link rel="stylesheet" href="assets/css/home.css">
 </head>
 <body>
 <header class="cabecera">

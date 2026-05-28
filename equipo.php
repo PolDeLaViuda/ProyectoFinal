@@ -79,7 +79,9 @@ $redirect_url = 'equipo.php?liga=' . urlencode($liga) . '&id=' . $equipo_id
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1.0">
     <title><?= htmlspecialchars($equipo['name']) ?> - StatsZone</title>
-    <link rel="stylesheet" href="assets/css/estilo.css">
+    <link rel="stylesheet" href="assets/css/base.css">
+    <link rel="stylesheet" href="assets/css/liga.css">
+    <link rel="stylesheet" href="assets/css/equipo.css">
 </head>
 <body>
 

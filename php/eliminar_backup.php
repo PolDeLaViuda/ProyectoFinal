@@ -7,31 +7,19 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     header("Location: ../admin.php"); exit;
 }
 
-$tipo    = $_POST['tipo']    ?? '';
 $archivo = $_POST['archivo'] ?? '';
 
-if ($tipo === 'bd') {
-    $dir     = 'C:\\Backups\\diario\\';
-    $pattern = '/^bd_[\d_-]+\.sql$/';
-} elseif ($tipo === 'web') {
-    $dir     = 'C:\\Backups\\semanal\\';
-    $pattern = '/^web_[\d_-]+\.zip$/';
-} else {
-    $_SESSION['admin_error'] = "Tipo de backup no valido.";
+if (!preg_match('/^backup_[\d_-]+\.zip$/', $archivo)) {
+    $_SESSION['admin_error'] = 'Nombre de archivo no valido.';
     header("Location: ../admin.php"); exit;
 }
 
-if (!preg_match($pattern, $archivo)) {
-    $_SESSION['admin_error'] = "Nombre de archivo no valido.";
-    header("Location: ../admin.php"); exit;
-}
-
-$ruta = $dir . $archivo;
+$ruta = 'C:\\Users\\Pol de la Viuda\\Desktop\\copia web final\\' . $archivo;
 if (file_exists($ruta)) {
     unlink($ruta);
-    $_SESSION['admin_ok'] = "Backup eliminado: {$archivo}";
+    $_SESSION['admin_ok'] = 'Copia de seguridad eliminada: ' . $archivo;
 } else {
-    $_SESSION['admin_error'] = "El archivo no existe.";
+    $_SESSION['admin_error'] = 'El archivo no existe.';
 }
 
 header("Location: ../admin.php"); exit;

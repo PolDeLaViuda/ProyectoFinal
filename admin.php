@@ -21,34 +21,19 @@ if (mysqli_query($conexion, "CREATE TABLE IF NOT EXISTS contacto_mensajes (id IN
     $total_mensajes = mysqli_fetch_assoc($res_msg)['total'] ?? 0;
 }
 
-// --- Cargar backups BD (diario) ---
-$dir_bd   = 'C:\\Backups\\diario\\';
-$backups_bd = [];
-if (is_dir($dir_bd)) {
-    $files = glob($dir_bd . 'bd_*.sql');
+// --- Cargar backups completos ---
+$dir_backup = 'C:\\Users\\Pol de la Viuda\\Desktop\\copia web final\\';
+$backups = [];
+if (is_dir($dir_backup)) {
+    $files = glob($dir_backup . 'backup_*.zip');
     if ($files) {
         rsort($files);
         foreach ($files as $f) {
-            $backups_bd[] = ['nombre' => basename($f), 'tamano' => filesize($f), 'fecha' => filemtime($f)];
+            $backups[] = ['nombre' => basename($f), 'tamano' => filesize($f), 'fecha' => filemtime($f)];
         }
     }
 }
-
-// --- Cargar backups Web (semanal) ---
-$dir_web    = 'C:\\Backups\\semanal\\';
-$backups_web = [];
-if (is_dir($dir_web)) {
-    $files = glob($dir_web . 'web_*.zip');
-    if ($files) {
-        rsort($files);
-        foreach ($files as $f) {
-            $backups_web[] = ['nombre' => basename($f), 'tamano' => filesize($f), 'fecha' => filemtime($f)];
-        }
-    }
-}
-
-$ultimo_bd  = count($backups_bd)  > 0 ? date('d/m/Y H:i', $backups_bd[0]['fecha'])  : 'Ninguno';
-$ultimo_web = count($backups_web) > 0 ? date('d/m/Y H:i', $backups_web[0]['fecha']) : 'Ninguno';
+$ultimo_backup = count($backups) > 0 ? date('d/m/Y H:i', $backups[0]['fecha']) : 'Ninguno';
 
 $ok    = $_SESSION['admin_ok']    ?? '';
 $error = $_SESSION['admin_error'] ?? '';
@@ -66,7 +51,8 @@ function format_bytes(int $bytes): string {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1.0">
     <title>Panel Admin - StatsZone</title>
-    <link rel="stylesheet" href="assets/css/estilo.css">
+    <link rel="stylesheet" href="assets/css/base.css">
+    <link rel="stylesheet" href="assets/css/admin.css">
 </head>
 <body>
 
@@ -101,135 +87,54 @@ function format_bytes(int $bytes): string {
         <?php endif; ?>
 
         <!-- ESTADISTICAS -->
-        <div class="admin-stats admin-stats--4" style="grid-template-columns:repeat(5,1fr)">
+        <div class="admin-stats admin-stats--3">
             <div class="stat-card">
                 <div class="stat-icono">&#128100;</div>
                 <div class="stat-val"><?= $total_usuarios ?></div>
                 <div class="stat-label">Usuarios registrados</div>
             </div>
             <div class="stat-card">
-                <div class="stat-icono">&#128190;</div>
-                <div class="stat-val"><?= count($backups_bd) ?></div>
-                <div class="stat-label">Backups de BD</div>
-            </div>
-            <div class="stat-card">
                 <div class="stat-icono">&#128230;</div>
-                <div class="stat-val"><?= count($backups_web) ?></div>
-                <div class="stat-label">Backups de web</div>
+                <div class="stat-val"><?= count($backups) ?></div>
+                <div class="stat-label">Copias de seguridad</div>
             </div>
             <div class="stat-card">
                 <div class="stat-icono">&#128336;</div>
-                <div class="stat-val stat-val--sm"><?= $ultimo_bd ?></div>
-                <div class="stat-label">Ultima BD</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-icono">&#9993;</div>
-                <div class="stat-val"><?= $total_mensajes ?></div>
-                <div class="stat-label">Mensajes recibidos</div>
+                <div class="stat-val stat-val--sm"><?= $ultimo_backup ?></div>
+                <div class="stat-label">Ultimo backup</div>
             </div>
         </div>
 
-        <!-- BOTON BACKUP COMPLETO -->
-        <div class="admin-seccion" style="padding:20px 28px;">
-            <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
-                <div>
-                    <h2 class="admin-seccion-titulo" style="margin-bottom:2px;">&#9889; Backup completo</h2>
-                    <p class="admin-seccion-sub">Crea a la vez la copia de la web y de la base de datos</p>
-                </div>
-                <form action="php/hacer_backup.php" method="POST">
-                    <input type="hidden" name="tipo" value="completo">
-                    <button type="submit" class="boton-backup">&#43; Crear backup completo</button>
-                </form>
-            </div>
-        </div>
-
-        <!-- BACKUP BASE DE DATOS (diario) -->
+        <!-- COPIAS DE SEGURIDAD -->
         <div class="admin-seccion">
             <div class="admin-seccion-header">
                 <div>
-                    <h2 class="admin-seccion-titulo">&#128190; Base de datos &nbsp;<span class="ruta-badge">C:\Backups\diario\</span></h2>
-                    <p class="admin-seccion-sub">Ultimo backup: <?= $ultimo_bd ?></p>
+                    <h2 class="admin-seccion-titulo">&#128230; Copias de seguridad &nbsp;<span class="ruta-badge">Escritorio\copia web final\</span></h2>
+                    <p class="admin-seccion-sub">Cada backup incluye todos los archivos web y la base de datos</p>
                 </div>
                 <form action="php/hacer_backup.php" method="POST">
-                    <input type="hidden" name="tipo" value="bd">
-                    <button type="submit" class="boton-backup boton-backup--azul">&#43; Solo BD</button>
+                    <button type="submit" class="boton-backup">&#43; Crear backup</button>
                 </form>
             </div>
 
-            <?php if (empty($backups_bd)): ?>
+            <?php if (empty($backups)): ?>
                 <div class="sin-datos">
-                    <p>&#128190; No hay backups de base de datos</p>
-                    <p class="sin-datos-sub">Se guardaran en C:\Backups\diario\</p>
+                    <p>&#128230; No hay copias de seguridad todavia</p>
+                    <p class="sin-datos-sub">Se guardaran en el Escritorio, en la carpeta "copia web final"</p>
                 </div>
             <?php else: ?>
                 <div class="tabla-backups-wrap">
                     <table class="tabla-backups">
                         <thead>
                             <tr>
-                                <th style="text-align:left">Archivo</th>
+                                <th class="th-izq">Archivo</th>
                                 <th>Fecha y hora</th>
                                 <th>Tamano</th>
                                 <th>Acciones</th>
                             </tr>
                         </thead>
                         <tbody>
-                        <?php foreach ($backups_bd as $i => $b): ?>
-                            <tr <?= $i === 0 ? 'class="fila-ultimo-backup"' : '' ?>>
-                                <td class="backup-nombre">
-                                    <?php if ($i === 0): ?><span class="badge-ultimo">Ultimo</span><?php endif; ?>
-                                    &#128196; <?= htmlspecialchars($b['nombre']) ?>
-                                </td>
-                                <td><?= date('d/m/Y H:i:s', $b['fecha']) ?></td>
-                                <td><?= format_bytes($b['tamano']) ?></td>
-                                <td class="backup-acciones">
-                                    <a href="php/descargar_backup.php?tipo=bd&archivo=<?= urlencode($b['nombre']) ?>"
-                                       class="btn-accion btn-descargar">&#8595; Descargar</a>
-                                    <form action="php/eliminar_backup.php" method="POST"
-                                          onsubmit="return confirm('Eliminar este backup de BD?');" style="display:inline;">
-                                        <input type="hidden" name="tipo" value="bd">
-                                        <input type="hidden" name="archivo" value="<?= htmlspecialchars($b['nombre']) ?>">
-                                        <button type="submit" class="btn-accion btn-eliminar">&#128465; Eliminar</button>
-                                    </form>
-                                </td>
-                            </tr>
-                        <?php endforeach; ?>
-                        </tbody>
-                    </table>
-                </div>
-            <?php endif; ?>
-        </div>
-
-        <!-- BACKUP WEB (semanal) -->
-        <div class="admin-seccion">
-            <div class="admin-seccion-header">
-                <div>
-                    <h2 class="admin-seccion-titulo">&#128230; Archivos web &nbsp;<span class="ruta-badge">C:\Backups\semanal\</span></h2>
-                    <p class="admin-seccion-sub">Ultimo backup: <?= $ultimo_web ?></p>
-                </div>
-                <form action="php/hacer_backup.php" method="POST">
-                    <input type="hidden" name="tipo" value="web">
-                    <button type="submit" class="boton-backup boton-backup--morado">&#43; Solo web</button>
-                </form>
-            </div>
-
-            <?php if (empty($backups_web)): ?>
-                <div class="sin-datos">
-                    <p>&#128230; No hay backups de archivos web</p>
-                    <p class="sin-datos-sub">Se guardaran en C:\Backups\semanal\</p>
-                </div>
-            <?php else: ?>
-                <div class="tabla-backups-wrap">
-                    <table class="tabla-backups">
-                        <thead>
-                            <tr>
-                                <th style="text-align:left">Archivo</th>
-                                <th>Fecha y hora</th>
-                                <th>Tamano</th>
-                                <th>Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                        <?php foreach ($backups_web as $i => $b): ?>
+                        <?php foreach ($backups as $i => $b): ?>
                             <tr <?= $i === 0 ? 'class="fila-ultimo-backup"' : '' ?>>
                                 <td class="backup-nombre">
                                     <?php if ($i === 0): ?><span class="badge-ultimo">Ultimo</span><?php endif; ?>
@@ -238,11 +143,14 @@ function format_bytes(int $bytes): string {
                                 <td><?= date('d/m/Y H:i:s', $b['fecha']) ?></td>
                                 <td><?= format_bytes($b['tamano']) ?></td>
                                 <td class="backup-acciones">
-                                    <a href="php/descargar_backup.php?tipo=web&archivo=<?= urlencode($b['nombre']) ?>"
-                                       class="btn-accion btn-descargar">&#8595; Descargar</a>
-                                    <form action="php/eliminar_backup.php" method="POST"
-                                          onsubmit="return confirm('Eliminar este backup de web?');" style="display:inline;">
-                                        <input type="hidden" name="tipo" value="web">
+                                    <form action="php/restaurar_backup.php" method="POST" class="form-inline"
+                                          onsubmit="return confirm('Restaurar web y BD desde este backup? Se sobreescribira todo.');">
+                                        <input type="hidden" name="archivo" value="<?= htmlspecialchars($b['nombre']) ?>">
+                                        <button type="submit" class="btn-accion btn-restaurar">&#8635; Restaurar</button>
+                                    </form>
+                                    <form action="php/eliminar_backup.php" method="POST" class="form-inline"
+                                          onsubmit="return confirm('Eliminar esta copia de seguridad?');">
+                                        <input type="hidden" name="tipo" value="backup">
                                         <input type="hidden" name="archivo" value="<?= htmlspecialchars($b['nombre']) ?>">
                                         <button type="submit" class="btn-accion btn-eliminar">&#128465; Eliminar</button>
                                     </form>
@@ -269,23 +177,23 @@ function format_bytes(int $bytes): string {
             </div>
 
             <!-- FORMULARIO NUEVO USUARIO -->
-            <div id="form-nuevo-usuario" class="oculto" style="background:#f7f8fc;border-radius:10px;padding:20px 24px;margin-bottom:20px;border:1px solid #e2e8f0;">
-                <h3 style="font-size:15px;color:#2d3748;margin-bottom:16px;">&#128100; Crear nuevo usuario</h3>
+            <div id="form-nuevo-usuario" class="oculto nuevo-usuario-form">
+                <h3>&#128100; Crear nuevo usuario</h3>
                 <form action="php/admin_añadir_usuario.php" method="POST">
-                    <div style="display:grid;grid-template-columns:1fr 1fr 1fr auto;gap:12px;align-items:end;">
-                        <div class="campo" style="margin:0">
+                    <div class="nuevo-usuario-grid">
+                        <div class="campo">
                             <label>Nombre</label>
                             <input type="text" name="nombre" required placeholder="Nombre completo">
                         </div>
-                        <div class="campo" style="margin:0">
+                        <div class="campo">
                             <label>Email</label>
                             <input type="email" name="email" required placeholder="correo@ejemplo.com">
                         </div>
-                        <div class="campo" style="margin:0">
+                        <div class="campo">
                             <label>Contrasena</label>
                             <input type="password" name="password" required placeholder="Min. 6 caracteres">
                         </div>
-                        <div class="campo" style="margin:0">
+                        <div class="campo">
                             <label>Rol</label>
                             <select name="rol" class="campo-select-admin">
                                 <option value="usuario">Usuario</option>
@@ -293,9 +201,9 @@ function format_bytes(int $bytes): string {
                             </select>
                         </div>
                     </div>
-                    <div style="margin-top:14px;">
+                    <div class="nuevo-usuario-acciones">
                         <button type="submit" class="boton-backup boton-backup--azul">Crear usuario</button>
-                        <button type="button" class="btn-accion btn-eliminar" style="margin-left:8px;"
+                        <button type="button" class="btn-accion btn-eliminar"
                                 onclick="document.getElementById('form-nuevo-usuario').classList.add('oculto')">Cancelar</button>
                     </div>
                 </form>
@@ -311,8 +219,8 @@ function format_bytes(int $bytes): string {
                     <thead>
                         <tr>
                             <th>ID</th>
-                            <th style="text-align:left">Nombre</th>
-                            <th style="text-align:left">Email</th>
+                            <th class="th-izq">Nombre</th>
+                            <th class="th-izq">Email</th>
                             <th>Rol</th>
                             <th>Registro</th>
                             <th>Acciones</th>
@@ -321,9 +229,9 @@ function format_bytes(int $bytes): string {
                     <tbody>
                     <?php foreach ($usuarios as $u): ?>
                         <tr>
-                            <td style="color:#a0aec0;font-size:13px;">#<?= $u['id'] ?></td>
-                            <td style="text-align:left;font-weight:600;"><?= htmlspecialchars($u['nombre']) ?></td>
-                            <td style="text-align:left;color:#718096;"><?= htmlspecialchars($u['email']) ?></td>
+                            <td class="td-id">#<?= $u['id'] ?></td>
+                            <td class="td-nombre"><?= htmlspecialchars($u['nombre']) ?></td>
+                            <td class="td-email"><?= htmlspecialchars($u['email']) ?></td>
                             <td>
                                 <?php if (($u['rol'] ?? '') === 'admin'): ?>
                                     <span class="rol-badge rol-admin">Admin</span>
@@ -331,7 +239,7 @@ function format_bytes(int $bytes): string {
                                     <span class="rol-badge rol-user">Usuario</span>
                                 <?php endif; ?>
                             </td>
-                            <td style="color:#718096;font-size:13px;">
+                            <td class="td-fecha">
                                 <?= !empty($u['created_at']) ? date('d/m/Y', strtotime($u['created_at'])) : '-' ?>
                             </td>
                             <td class="backup-acciones">
@@ -342,7 +250,7 @@ function format_bytes(int $bytes): string {
                                         <button type="submit" class="btn-accion btn-eliminar">&#128465; Eliminar</button>
                                     </form>
                                 <?php else: ?>
-                                    <span style="font-size:12px;color:#a0aec0;">Tu cuenta</span>
+                                    <span class="td-tu-cuenta">Tu cuenta</span>
                                 <?php endif; ?>
                             </td>
                         </tr>
@@ -376,9 +284,9 @@ function format_bytes(int $bytes): string {
                         <thead>
                             <tr>
                                 <th>ID</th>
-                                <th style="text-align:left">Nombre</th>
-                                <th style="text-align:left">Email</th>
-                                <th style="text-align:left">Mensaje</th>
+                                <th class="th-izq">Nombre</th>
+                                <th class="th-izq">Email</th>
+                                <th class="th-izq">Mensaje</th>
                                 <th>Fecha</th>
                                 <th>Acciones</th>
                             </tr>
@@ -386,20 +294,18 @@ function format_bytes(int $bytes): string {
                         <tbody>
                         <?php foreach ($mensajes as $m): ?>
                             <tr>
-                                <td style="color:#a0aec0;font-size:13px;">#<?= $m['id'] ?></td>
-                                <td style="text-align:left;font-weight:600;"><?= htmlspecialchars($m['nombre']) ?></td>
-                                <td style="text-align:left;color:#718096;"><?= htmlspecialchars($m['email']) ?></td>
-                                <td style="text-align:left;max-width:300px;">
+                                <td class="td-id">#<?= $m['id'] ?></td>
+                                <td class="td-nombre"><?= htmlspecialchars($m['nombre']) ?></td>
+                                <td class="td-email"><?= htmlspecialchars($m['email']) ?></td>
+                                <td class="td-mensaje">
                                     <span title="<?= htmlspecialchars($m['mensaje']) ?>">
                                         <?= htmlspecialchars(mb_strimwidth($m['mensaje'], 0, 80, '...')) ?>
                                     </span>
                                 </td>
-                                <td style="color:#718096;font-size:13px;white-space:nowrap;">
-                                    <?= date('d/m/Y H:i', strtotime($m['fecha'])) ?>
-                                </td>
+                                <td class="td-fecha"><?= date('d/m/Y H:i', strtotime($m['fecha'])) ?></td>
                                 <td class="backup-acciones">
-                                    <form action="php/eliminar_mensaje.php" method="POST"
-                                          onsubmit="return confirm('Eliminar este mensaje?');" style="display:inline;">
+                                    <form action="php/eliminar_mensaje.php" method="POST" class="form-inline"
+                                          onsubmit="return confirm('Eliminar este mensaje?');">
                                         <input type="hidden" name="id" value="<?= (int)$m['id'] ?>">
                                         <button type="submit" class="btn-accion btn-eliminar">&#128465; Eliminar</button>
                                     </form>
@@ -412,10 +318,8 @@ function format_bytes(int $bytes): string {
             <?php endif; ?>
         </div>
 
-        <div style="text-align:center;margin-top:16px;">
-            <a href="home.php" class="boton-perfil-sec" style="display:inline-block;width:auto;padding:10px 28px;">
-                &#8592; Volver al inicio
-            </a>
+        <div class="admin-volver">
+            <a href="home.php" class="boton-perfil-sec">&#8592; Volver al inicio</a>
         </div>
 
     </div>

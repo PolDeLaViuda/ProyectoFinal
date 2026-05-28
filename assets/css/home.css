@@ -1,0 +1,11 @@
+.pagina-home { display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:calc(100vh - 60px); padding:40px 20px; text-align:center; color:#fff; }
+.pagina-home h1 { font-size:32px; margin-bottom:10px; color:#fff; }
+.pagina-home p  { color:rgba(255,255,255,.8); margin-bottom:40px; font-size:16px; }
+.opciones { display:flex; gap:24px; flex-wrap:wrap; justify-content:center; }
+.tarjeta-liga { display:flex; flex-direction:column; align-items:center; width:220px; padding:36px 20px; border-radius:16px; color:#fff; font-weight:700; transition:.2s; box-shadow:0 8px 24px rgba(0,0,0,.2); }
+.tarjeta-liga:hover { transform:translateY(-6px); box-shadow:0 16px 40px rgba(0,0,0,.3); text-decoration:none; }
+.tarjeta-liga--nba    { background:#1d428a; }
+.tarjeta-liga--laliga { background:#ee1c25; }
+.liga-icono  { font-size:48px; margin-bottom:12px; }
+.liga-nombre { font-size:22px; margin-bottom:6px; }
+.liga-desc   { font-size:13px; font-weight:400; opacity:.85; text-align:center; }

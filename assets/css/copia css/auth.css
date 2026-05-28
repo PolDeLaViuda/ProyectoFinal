@@ -1,0 +1,9 @@
+.pagina-auth { min-height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:20px; }
+.tabs { display:flex; background:rgba(255,255,255,.15); border-radius:12px 12px 0 0; width:100%; max-width:420px; }
+.tab { flex:1; text-align:center; padding:14px; color:rgba(255,255,255,.75); font-weight:600; font-size:15px; transition:.2s; }
+.tab:hover { background:rgba(255,255,255,.1); color:#fff; text-decoration:none; }
+.tab--activo { background:#fff; color:#667eea; border-radius:10px 10px 0 0; }
+.tarjeta { background:#fff; border-radius:0 0 16px 16px; padding:36px 40px; width:100%; max-width:420px; box-shadow:0 20px 60px rgba(0,0,0,.25); }
+.tarjeta h1 { font-size:24px; margin-bottom:6px; }
+.tarjeta p  { color:#718096; margin-bottom:24px; font-size:14px; }
+.pie-form { text-align:center; font-size:14px; color:#718096; margin-top:20px; }
